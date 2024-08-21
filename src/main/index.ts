@@ -1,9 +1,18 @@
-import { app, shell, BrowserWindow, ipcMain, MenuItemConstructorOptions, Menu } from 'electron'
+import {
+  app,
+  shell,
+  BrowserWindow,
+  ipcMain,
+  MenuItemConstructorOptions,
+  Menu
+  // dialog
+} from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import drag from './drag'
 import createTray from './tray'
+export let myWin: BrowserWindow | null = null
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -27,10 +36,30 @@ function createWindow(): void {
       sandbox: false
     }
   })
+
+  myWin = mainWindow
   drag(mainWindow)
   mainWindow.setAspectRatio(1)
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
+  })
+  mainWindow.on('close', (e) => {
+    // console.log('%c Line:26 🥑', 'color:#42b983')
+    // const choice = dialog.showMessageBoxSync(mainWindow, {
+    //   type: 'info',
+    //   buttons: ['最小化到托盘', '直接退出'],
+    //   title: '提示',
+    //   message: '确定要关闭吗?',
+    //   defaultId: 0,
+    //   cancelId: 1
+    // })
+    // const leave = choice === 0
+    // if (leave) {
+
+    e.preventDefault()
+    // mainWindow.minimize()
+    mainWindow.hide()
+    // }
   })
   if (is.dev) mainWindow.webContents.openDevTools()
   mainWindow.webContents.setWindowOpenHandler((details) => {
